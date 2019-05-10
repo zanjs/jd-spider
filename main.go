@@ -57,10 +57,12 @@ func fetchDataDetail(url string) string {
 	// 	title = selection.Text()
 	// 	log.Println(title)
 	// })
-	doc.Find("div[id=\"choose-attrs\"]").Each(func(i int, selection *goquery.Selection) {
-		// log.Println(i)
+	doc.Find("#choose-attrs").Find(".item").Each(func(i int, selection *goquery.Selection) {
+		log.Println("+++++++++++++++++++++++")
+		log.Println(i)
 		log.Println(selection.Text())
 	})
+
 	return title
 }
 
