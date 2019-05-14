@@ -25,6 +25,16 @@ func main() {
 			"url": title + " || " + url,
 		})
 	})
+
+	bb := BaseCraw{}
+	bb.domain = "jd"
+
+	methodMap := map[string]interface{}{
+		"Get": bb.Get,
+	}
+	v := "Get"
+	methodMap[v].(func(string))("zanjs")
+
 	r.Run() // listen and serve on 0.0.0.0:8080
 	// 测试功能只抓取10页数据
 	// for i := 1; i < 10; i++ {
