@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/bobesa/go-domain-util/domainutil"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,16 +27,7 @@ func main() {
 		})
 	})
 
-	bb := BaseCraw{}
-	bb.domain = "jd"
-
-	methodMap := map[string]interface{}{
-		"Get": bb.Get,
-	}
-	v := "Get"
-	methodMap[v].(func(string))("zanjs")
-
-	r.Run() // listen and serve on 0.0.0.0:8080
+	r.Run(":10099") // listen and serve on 0.0.0.0:8080
 	// 测试功能只抓取10页数据
 	// for i := 1; i < 10; i++ {
 	// 	url := fmt.Sprintf("https://search.jd.com/Search?keyword=mac&enc=utf-8&wq=mac&page=%d", i)
@@ -49,10 +41,19 @@ func main() {
 func fetchDataDetail(url string) string {
 	fmt.Println(url)
 	client := http.Client{}
-	request, err := http.NewRequest("GET", url, strings.NewReader("name=cjb"))
+	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		log.Println(err)
 	}
+	// res, err := http.Get(url)
+	// if err != nil {
+	// 		// handle error
+	// }
+	// defer res.Body.Close()
+
+	// // Convert the designated charset HTML to utf-8 encoded HTML.
+	// // `charset` being one of the charsets known by the iconv package.
+	// utfBody, err := iconv.NewReader(res.Body, charset, "utf-8")
 
 	request.Header.Set("User-Agent", "Mozilla/5.0 (Linux; U; Android 5.1; zh-cn; m1 metal Build/LMY47I) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 Chrome/37.0.0.0 MQQBrowser/7.6 Mobile Safari/537.36")
 
@@ -60,20 +61,53 @@ func fetchDataDetail(url string) string {
 	if err != nil {
 		log.Println(err)
 	}
+	bodyF, err := DecodeHTMLBody(response.Body, "")
+	fmt.Println("bodyF")
+	fmt.Println(bodyF)
+	// utfBody, err := iconv.NewReader(response.Body, "gbk", "utf-8")
+	// fmt.Println(utfBody)
 	// 使用NewDocumentFromResponse方式获取获取数据，是应为某些网页会有防止爬取限制，需要设置Header防止被限制
 	doc, err := goquery.NewDocumentFromResponse(response)
-	title := ""
+	if err != nil {
+		log.Println(err)
+	}
+	// buf := new(bytes.Buffer)
+	// buf.ReadFrom(utfBody)
+	// s := buf.String()
+	// AppendToFile("jdprive2.txt", s)
+	// bb := BaseCraw{}
+	// bb.domain = "jd"
+
+	// methodMap := map[string]interface{}{
+	// 	"jd.com": bb.Get,
+	// }
+	// v := "jd.com"
+	// title := ""
+	// title = methodMap[v].(func(string))("bb.domain")
+	bb := BaseCraw{}
+
+	methodMap := map[string]interface{}{
+		"Get":    bb.Get,
+		"jd.com": bb.GetJD,
+	}
+	v := "jd.com"
+
+	domain := domainutil.Domain(url)
+
+	if domain != "" {
+		v = domain
+	}
+	fmt.Println("---------------------")
+	fmt.Println(v)
+	if methodMap[v] != nil {
+		methodMap[v].(func(goquery.Document))(*doc)
+	}
+	AppendToFile("jdprive.txt", doc.Text())
 	// doc.Find("title").Each(func(i int, selection *goquery.Selection) {
 	// 	title = selection.Text()
-	// 	log.Println(title)
 	// })
-	doc.Find("#choose-attrs").Find(".item").Each(func(i int, selection *goquery.Selection) {
-		log.Println("+++++++++++++++++++++++")
-		log.Println(i)
-		log.Println(selection.Text())
-	})
 
-	return title
+	return bb.title
 }
 
 /**
