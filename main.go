@@ -61,9 +61,9 @@ func fetchDataDetail(url string) string {
 	if err != nil {
 		log.Println(err)
 	}
-	bodyF, err := DecodeHTMLBody(response.Body, "")
-	fmt.Println("bodyF")
-	fmt.Println(bodyF)
+	// bodyF, err := DecodeHTMLBody(response.Body, "")
+	// fmt.Println("bodyF")
+	// fmt.Println(bodyF)
 	// utfBody, err := iconv.NewReader(response.Body, "gbk", "utf-8")
 	// fmt.Println(utfBody)
 	// 使用NewDocumentFromResponse方式获取获取数据，是应为某些网页会有防止爬取限制，需要设置Header防止被限制
@@ -102,7 +102,7 @@ func fetchDataDetail(url string) string {
 	if methodMap[v] != nil {
 		methodMap[v].(func(goquery.Document))(*doc)
 	}
-	AppendToFile("jdprive.txt", doc.Text())
+	// AppendToFile("jdprive.txt", doc.Text())
 	// doc.Find("title").Each(func(i int, selection *goquery.Selection) {
 	// 	title = selection.Text()
 	// })
