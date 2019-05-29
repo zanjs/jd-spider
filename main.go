@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -27,12 +28,22 @@ func main() {
 		})
 	})
 
+	r.GET("/c", func(c *gin.Context) {
+		url := c.DefaultQuery("url", "")
+		title := TaoBao(url)
+
+		c.JSON(200, gin.H{
+			"url": title + " || " + url,
+		})
+	})
+
 	r.Run(":10099") // listen and serve on 0.0.0.0:8080
 	// 测试功能只抓取10页数据
 	// for i := 1; i < 10; i++ {
 	// 	url := fmt.Sprintf("https://search.jd.com/Search?keyword=mac&enc=utf-8&wq=mac&page=%d", i)
 	// 	fetchData(url)
 	// }
+
 }
 
 /**
