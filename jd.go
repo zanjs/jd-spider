@@ -4,22 +4,31 @@ import (
 	"fmt"
 
 	"github.com/PuerkitoBio/goquery"
+	"github.com/gocolly/colly"
 )
 
 // BaseCraw is
 type BaseCraw struct {
-	domain string
-	title  string
+	domain  string
+	resData ResData
 }
 
-// GetJD is
-func (b *BaseCraw) GetJD(doc goquery.Document) {
-	fmt.Println(b)
-	// title := ""
-	doc.Find("title").Each(func(i int, selection *goquery.Selection) {
-		b.title = selection.Text()
+// GetJD2 is
+func (b *BaseCraw) GetJD2(url string) {
+	title := ""
+	c := colly.NewCollector()
+
+	// Find and visit all links
+	c.OnHTML("head", func(e *colly.HTMLElement) {
+		e.DOM.Find("title").Each(func(i int, selection *goquery.Selection) {
+			title = selection.Text()
+			b.resData.URL = url
+			b.resData.Title = title + "测试"
+			fmt.Println(title)
+		})
+
 	})
-	// b.title = title
+	c.Visit(url)
 }
 
 // MethodMapFn is

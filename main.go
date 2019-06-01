@@ -21,10 +21,10 @@ func main() {
 	})
 	r.GET("/u", func(c *gin.Context) {
 		url := c.DefaultQuery("url", "")
-		title := fetchDataDetail(url)
+		resData := AfterCarw(url)
 
 		c.JSON(200, gin.H{
-			"url": title + " || " + url,
+			"data": resData,
 		})
 	})
 
@@ -49,13 +49,13 @@ func main() {
 /**
 抓取数据
 */
-func fetchDataDetail(url string) string {
-	fmt.Println(url)
-	client := http.Client{}
-	request, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		log.Println(err)
-	}
+func fetchDataDetail(url string) ResData {
+	// fmt.Println(url)
+	// client := http.Client{}
+	// request, err := http.NewRequest("GET", url, nil)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 	// res, err := http.Get(url)
 	// if err != nil {
 	// 		// handle error
@@ -66,22 +66,22 @@ func fetchDataDetail(url string) string {
 	// // `charset` being one of the charsets known by the iconv package.
 	// utfBody, err := iconv.NewReader(res.Body, charset, "utf-8")
 
-	request.Header.Set("User-Agent", "Mozilla/5.0 (Linux; U; Android 5.1; zh-cn; m1 metal Build/LMY47I) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 Chrome/37.0.0.0 MQQBrowser/7.6 Mobile Safari/537.36")
+	// request.Header.Set("User-Agent", "Mozilla/5.0 (Linux; U; Android 5.1; zh-cn; m1 metal Build/LMY47I) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 Chrome/37.0.0.0 MQQBrowser/7.6 Mobile Safari/537.36")
 
-	response, err := client.Do(request)
-	if err != nil {
-		log.Println(err)
-	}
+	// response, err := client.Do(request)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 	// bodyF, err := DecodeHTMLBody(response.Body, "")
 	// fmt.Println("bodyF")
 	// fmt.Println(bodyF)
 	// utfBody, err := iconv.NewReader(response.Body, "gbk", "utf-8")
 	// fmt.Println(utfBody)
 	// 使用NewDocumentFromResponse方式获取获取数据，是应为某些网页会有防止爬取限制，需要设置Header防止被限制
-	doc, err := goquery.NewDocumentFromResponse(response)
-	if err != nil {
-		log.Println(err)
-	}
+	// doc, err := goquery.NewDocumentFromResponse(response)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 	// buf := new(bytes.Buffer)
 	// buf.ReadFrom(utfBody)
 	// s := buf.String()
@@ -98,7 +98,8 @@ func fetchDataDetail(url string) string {
 	bb := BaseCraw{}
 
 	methodMap := map[string]interface{}{
-		"jd.com": bb.GetJD,
+		"jd.com":     bb.GetJD2,
+		"taobao.com": bb.GetTaoBao,
 	}
 	v := "jd.com"
 
@@ -111,14 +112,14 @@ func fetchDataDetail(url string) string {
 	fmt.Println(v)
 	fmt.Println(methodMap[v])
 	if methodMap[v] != nil {
-		methodMap[v].(func(goquery.Document))(*doc)
+		methodMap[v].(func(string))(url)
 	}
 	// AppendToFile("jdprive.txt", doc.Text())
 	// doc.Find("title").Each(func(i int, selection *goquery.Selection) {
 	// 	title = selection.Text()
 	// })
-
-	return bb.title
+	bb.resData.Domain = domain
+	return bb.resData
 }
 
 /**
