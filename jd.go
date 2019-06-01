@@ -12,13 +12,6 @@ type BaseCraw struct {
 	title  string
 }
 
-// Get is
-func (b *BaseCraw) Get(s string) {
-	fmt.Println(s)
-	fmt.Println(b.domain)
-	// return b.domain
-}
-
 // GetJD is
 func (b *BaseCraw) GetJD(doc goquery.Document) {
 	fmt.Println(b)

@@ -98,7 +98,6 @@ func fetchDataDetail(url string) string {
 	bb := BaseCraw{}
 
 	methodMap := map[string]interface{}{
-		"Get":    bb.Get,
 		"jd.com": bb.GetJD,
 	}
 	v := "jd.com"
@@ -110,6 +109,7 @@ func fetchDataDetail(url string) string {
 	}
 	fmt.Println("---------------------")
 	fmt.Println(v)
+	fmt.Println(methodMap[v])
 	if methodMap[v] != nil {
 		methodMap[v].(func(goquery.Document))(*doc)
 	}
