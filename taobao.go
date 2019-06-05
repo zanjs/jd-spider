@@ -22,6 +22,20 @@ func (b *BaseCraw) GetTaoBao(url string) {
 		})
 
 	})
+
+	c.OnHTML("body", func(e *colly.HTMLElement) {
+		e.DOM.Find("img").Each(func(i int, se *goquery.Selection) {
+			fmt.Println(i)
+
+			if i == 0 {
+				img, bool := se.Attr("src")
+				if bool {
+					b.resData.Thumb = img
+				}
+			}
+		})
+	})
+
 	c.Visit(url)
 }
 
